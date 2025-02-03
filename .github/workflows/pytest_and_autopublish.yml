@@ -25,8 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
+    strategy:
+      max-parallel: 2
+      matrix:
+        python-version: ["3.11", "3.12"]
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.python-version }}
       cancel-in-progress: true
 
     steps:
@@ -35,7 +39,7 @@ jobs:
       # Install deps
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
           # Uncomment to cache of pip dependencies (if tests too slow)
           cache: pip
           cache-dependency-path: '**/pyproject.toml'
